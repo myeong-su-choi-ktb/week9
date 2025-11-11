@@ -1,0 +1,9 @@
+[project]
+name = "community-backend"
+version = "0.1.0"
+requires-python = "3.10.19"
+dependencies = [
+    "fastapi==0.116.1",
+    "uvicorn==0.35.0",
+    "email-validator==2.3.0"
+]
