@@ -19,5 +19,10 @@ def singup(signup_dto: UserSignup):
 
 # 회원 정보 수정 API
 @router.patch("/{user_id}/profile", status_code=status.HTTP_200_OK, response_model=SignupResponse)
-def edit_profile(user_id: int, edit_dto: UserEdit):
-    return edit_user(user_id, edit_dto)
+def edit_user(user_id: int, user_edit_dto: UserEdit):
+    return edit_profile(user_id, user_edit_dto)
+
+# 비밀번호 수정 API
+@router.patch("/{user_id}/password", status_code=status.HTTP_200_OK, response_model=SignupResponse)
+def edit_user(user_id: int, dto: UserPasswordEdit):
+    return edit_password(user_id, dto)

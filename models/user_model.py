@@ -146,4 +146,37 @@ class UserEdit(BaseModel):
             raise ValueError("nickname_max_length")
         
         return value
+
+
+""" ----------------------------- 비밀번호 수정 관련 ----------------------------- """
+
+# 비밀번호 수정 DTO
+class UserPasswordEdit(BaseModel):
+    password: str = Field(..., description="")
+    password_confirm: str = Field(..., description="")
+
+    # 비밀번호 유효성 검사
+    @field_validator("password")
+    @classmethod
+    def password_rule(cls, value):
+        if not value or value.strip() == "":
+            raise ValueError("password_required")
+
+        pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,20}$'
+        if not re.match(pattern, value):
+            raise ValueError("invalid_password_rule")
         
+        return value
+    
+    # 비밀번호 확인 검사
+    @field_validator("password_confirm")
+    @classmethod
+    def confirm_password(cls, value, info) -> str:
+        # 비밀번호 확인 입력 안했을 시
+        if not value or value.strip() == "":
+            raise ValueError("password_confirm_required")
+
+        # 비밀번호가 확인과 다를 시
+        if "password" in info.data and value != info.data["password"]:
+            raise ValueError("password_not_match")
+        return value

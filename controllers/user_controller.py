@@ -60,14 +60,14 @@ def signup_user(signup_dto: UserSignup) -> SignupResponse:
     )
 
 # 회원 정보 수정 서비스
-def edit_user(user_id: int, edit_dto: UserEdit) -> SignupResponse:
+def edit_profile(user_id: int, user_edit_dto: UserEdit) -> SignupResponse:
     
     target = next((user for user in users if user["id"] == user_id), None)
     if not target:
         raise ValueError("user_not_found")
 
     # 닉네임이 중복되는 경우
-    if any(user["nickname"] == edit_dto.nickname for user in users):
+    if any(user["nickname"] == user_edit_dto.nickname for user in users):
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
             content={
@@ -77,8 +77,8 @@ def edit_user(user_id: int, edit_dto: UserEdit) -> SignupResponse:
         )
     
     # 수정 반영
-    target["nickname"] = edit_dto.nickname
-    target["profile_image"] = edit_dto.profile_image
+    target["nickname"] = user_edit_dto.nickname
+    target["profile_image"] = user_edit_dto.profile_image
 
     return SignupResponse(
         message="회원정보 수정 성공",
@@ -88,3 +88,20 @@ def edit_user(user_id: int, edit_dto: UserEdit) -> SignupResponse:
             "profile_image": target["profile_image"]
         }
     )
+
+# 비밀번호 수정 서비스
+def edit_password(user_id: int, password_dto: UserPasswordEdit) -> SignupResponse:
+    target = next((user for user in users if user["id"] == user_id), None)
+    if not target:
+        raise ValueError("user_not_found")
+    
+    # 수정 반영
+    target["password"] = password_dto.password
+
+    return SignupResponse(
+        message="비밀번호 수정 성공",
+        data={
+            "id": target["id"], 
+            "email": target["email"]
+        }
+    ) 
