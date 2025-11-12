@@ -14,13 +14,26 @@ async def server_exception_handler(request: Request, exc: Exception):
         }
     )
 
+# ValueError 처리
+async def value_error_exception_handler(request: Request, exc: ValueError):
+    msg = str(exc)
+
+    print("🔥 Value error:", msg)
+
+    if "user_not_found" in msg:
+        return JSONResponse(
+            status_code=404, 
+            content={"message": "*존재하지 않는 사용자입니다.", 
+                     "data": None
+                }
+            )
 
 # 요청 데이터 유효성 검증 실패 시
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     for error in exc.errors():
+        print("🔥 Validation Errors:", error)
+
         msg = error.get("msg")
-        
-        print("🔥 Validation Errors:", exc.errors())
 
         # 이메일 형식이 유효하지 않은 경우
         if "value is not a valid email address" in msg:
@@ -122,7 +135,15 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
                 }
             )
         
-
+        # 사용자를 찾지 못한 경우
+        if "user_not_found" in msg:
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={
+                    "message": "*존재하지 않는 사용자입니다.",
+                    "data": None
+                }
+            )
         
     # 그 외 에러
     return JSONResponse(

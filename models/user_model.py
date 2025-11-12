@@ -120,3 +120,30 @@ class UserSignup(BaseModel):
 class SignupResponse(BaseModel):
     message: str
     data: Optional[Dict] = None
+
+
+""" ----------------------------- 회원 정보 수정 관련 ----------------------------- """
+
+# 회원정보 수정 요청 DTO
+class UserEdit(BaseModel):
+    nickname: str = Field(..., description="")
+    profile_image: str = Field(..., description="")
+
+    # 닉네임 유효성 검사
+    @field_validator("nickname")
+    @classmethod
+    def validate_nickname(cls, value):
+        # 닉네임 입력하지 않을 시
+        if not value and value.strip() == "":
+            raise ValueError("nickname_required")
+        
+        # 닉에임 띄어쓰기 불가
+        if " " in value:
+            raise ValueError("nickname_no_space")
+        
+        # 닉네임 10글자 이내
+        if len(value) > 10:
+            raise ValueError("nickname_max_length")
+        
+        return value
+        
