@@ -1,16 +1,16 @@
 # models/user_model.py
-from pydantic import BaseModel, EmailStr, ValidationInfo, Field, field_validator
-from typing import Optional, List, Dict
+from pydantic import BaseModel, EmailStr, Field, field_validator
+from typing import List, Dict
 import re
 
 
-# 사용자 정보 in-memory 저장소
+# 사용자 정보를 임시로 저장하는 in-memory 저장소
 users: List[Dict] = [
-    {"id": 1, "email" : "test1@test.com", "password" : "Test1234!", "nickname" : "abcd", "profile_image" : "https://image.kr/img.jpg"},
-    {"id": 2, "email" : "test2@test.com", "password" : "Test1234!", "nickname" : "efgh", "profile_image" : "https://image.kr/img.jpg"},
-    {"id": 3, "email" : "test3@test.com", "password" : "Test1234!", "nickname" : "ijkl", "profile_image" : "https://image.kr/img.jpg"},
-    {"id": 4, "email" : "test4@test.com", "password" : "Test1234!", "nickname" : "mnop", "profile_image" : "https://image.kr/img.jpg"},
-    {"id": 5, "email" : "test5@test.com", "password" : "Test1234!", "nickname" : "qrst", "profile_image" : "https://image.kr/img.jpg"}
+    {"id": 1, "email" : "test1@test.com", "password" : "Test1234!", "nickname" : "abcd", "profile_image" : "https://image.kr/img1.jpg"},
+    {"id": 2, "email" : "test2@test.com", "password" : "Test1234!", "nickname" : "efgh", "profile_image" : "https://image.kr/img2.jpg"},
+    {"id": 3, "email" : "test3@test.com", "password" : "Test1234!", "nickname" : "ijkl", "profile_image" : "https://image.kr/img3.jpg"},
+    {"id": 4, "email" : "test4@test.com", "password" : "Test1234!", "nickname" : "mnop", "profile_image" : "https://image.kr/img4.jpg"},
+    {"id": 5, "email" : "test5@test.com", "password" : "Test1234!", "nickname" : "qrst", "profile_image" : "https://image.kr/img5.jpg"}
 ]
 
 
@@ -43,11 +43,6 @@ class UserLogin(BaseModel):
             raise ValueError("invalid_password_rule")
         
         return value
-
-# 로그인 응답 DTO
-class LoginResponse(BaseModel):
-    message: str
-    data: Optional[dict] = None
 
 
 """ ----------------------------- 회원가입 관련 ----------------------------- """
@@ -119,11 +114,6 @@ class UserSignup(BaseModel):
             raise ValueError("nickname_max_length")
         
         return value
-    
-# 회원가입 응답 DTO
-class SignupResponse(BaseModel):
-    message: str
-    data: Optional[Dict] = None
 
 
 """ ----------------------------- 회원 정보 수정 관련 ----------------------------- """
@@ -138,7 +128,7 @@ class UserEdit(BaseModel):
     @classmethod
     def validate_nickname(cls, value):
         # 닉네임 입력하지 않을 시
-        if not value and value.strip() == "":
+        if not value or value.strip() == "":
             raise ValueError("nickname_required")
         
         # 닉에임 띄어쓰기 불가
