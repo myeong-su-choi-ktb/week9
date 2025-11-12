@@ -6,7 +6,11 @@ import re
 
 # 사용자 정보 in-memory 저장소
 users: List[Dict] = [
-    {"id": 1, "email" : "test@startupcode.kr", "password" : "Test1234!", "nickname" : "startup", "profile_image" : "https://image.kr/img.jpg"}
+    {"id": 1, "email" : "test1@test.com", "password" : "Test1234!", "nickname" : "abcd", "profile_image" : "https://image.kr/img.jpg"},
+    {"id": 2, "email" : "test2@test.com", "password" : "Test1234!", "nickname" : "efgh", "profile_image" : "https://image.kr/img.jpg"},
+    {"id": 3, "email" : "test3@test.com", "password" : "Test1234!", "nickname" : "ijkl", "profile_image" : "https://image.kr/img.jpg"},
+    {"id": 4, "email" : "test4@test.com", "password" : "Test1234!", "nickname" : "mnop", "profile_image" : "https://image.kr/img.jpg"},
+    {"id": 5, "email" : "test5@test.com", "password" : "Test1234!", "nickname" : "qrst", "profile_image" : "https://image.kr/img.jpg"}
 ]
 
 

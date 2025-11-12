@@ -1,6 +1,5 @@
 # routers/user_router.py
 from fastapi import APIRouter, status
-
 from models.user_model import *
 from controllers.user_controller import *
 

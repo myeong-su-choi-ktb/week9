@@ -10,7 +10,11 @@ def login_user(login_dto: UserLogin) -> LoginResponse:
         if user["email"] == login_dto.email and user["password"] == login_dto.password:
             return LoginResponse(
                 message="로그인 성공",
-                data={"email": login_dto.email}
+                data={
+                    "email": user["email"],
+                    "nickname": user["nickname"],
+                    "profile_image": user["profile_image"]
+                }
             )
         
     return LoginResponse(message="*아이디 또는 비밀번호를 확인해주세요.", data=None)
