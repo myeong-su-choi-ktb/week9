@@ -1,7 +1,7 @@
 # models/user_model.py
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import List, Dict
-import re
+from validators.user_validator import validate_email, validate_password, validate_password_confirm, validate_profile_iamge, validate_nickname
 
 
 # 사용자 정보를 임시로 저장하는 in-memory 저장소
@@ -24,25 +24,14 @@ class UserLogin(BaseModel):
     # 이메일 입력 여부 확인
     @field_validator("email", mode="before")
     @classmethod
-    def validate_email(cls, value):
-        if not value or value.strip() == "":
-            raise ValueError("email_required")
-        return value
+    def email_check(cls, value):
+        return validate_email(value)
     
     # 비밀번호 유효성 검사
     @field_validator("password")
     @classmethod
-    def password_rule(cls, value):
-        # 비밀번호 입력 안했을 시
-        if not value or value.strip() == "":
-            raise ValueError("password_required")
-
-        # 8자 이상, 20자 이하 / 대문자, 소문자, 숫자, 특수문자 최소 1개 포함
-        pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,20}$'
-        if not re.match(pattern, value):
-            raise ValueError("invalid_password_rule")
-        
-        return value
+    def password_check(cls, value):
+        return validate_password(value)
 
 
 """ ----------------------------- 회원가입 관련 ----------------------------- """
@@ -58,62 +47,32 @@ class UserSignup(BaseModel):
     # 이메일 입력 여부 확인
     @field_validator("email", mode="before")
     @classmethod
-    def validate_email(cls, value):
-        if not value or value.strip() == "":
-            raise ValueError("email_required")
-        return value
+    def email_check(cls, value):
+        return validate_email(value)
 
     # 비밀번호 유효성 검사
     @field_validator("password")
     @classmethod
-    def password_rule(cls, value):
-        if not value or value.strip() == "":
-            raise ValueError("password_required")
-
-        pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,20}$'
-        if not re.match(pattern, value):
-            raise ValueError("invalid_password_rule")
-        
-        return value
+    def password_check(cls, value):
+        return validate_password(value)
     
     # 비밀번호 확인 검사
     @field_validator("password_confirm")
     @classmethod
-    def confirm_password(cls, value, info) -> str:
-        # 비밀번호 확인 입력 안했을 시
-        if not value or value.strip() == "":
-            raise ValueError("password_confirm_required")
-
-        # 비밀번호가 확인과 다를 시
-        if "password" in info.data and value != info.data["password"]:
-            raise ValueError("password_not_match")
-        return value
+    def password_confirm_check(cls, value, info) -> str:
+        return validate_password_confirm(value, info.data.get("password"))
     
     # 프로필 이미지 검증
     @field_validator("profile_image")
     @classmethod
-    def validate_profile_image(cls, value):
-        if not value or value.strip() == "":
-            raise ValueError("profile_image_required")
-        return value
+    def profile_image_check(cls, value):
+        return validate_profile_iamge(value)
     
     # 닉네임 유효성 검사
     @field_validator("nickname")
     @classmethod
-    def validate_nickname(cls, value):
-        # 닉네임 입력하지 않을 시
-        if not value or value.strip() == "":
-            raise ValueError("nickname_required")
-        
-        # 닉네임 띄어쓰기 불가
-        if " " in value:
-            raise ValueError("nickname_no_space")
-        
-        # 닉네임 10글자 이내
-        if len(value) > 10:
-            raise ValueError("nickname_max_length")
-        
-        return value
+    def nickname_check(cls, value):
+        return validate_nickname(value)
 
 
 """ ----------------------------- 회원 정보 수정 관련 ----------------------------- """
@@ -126,20 +85,8 @@ class UserEdit(BaseModel):
     # 닉네임 유효성 검사
     @field_validator("nickname")
     @classmethod
-    def validate_nickname(cls, value):
-        # 닉네임 입력하지 않을 시
-        if not value or value.strip() == "":
-            raise ValueError("nickname_required")
-        
-        # 닉에임 띄어쓰기 불가
-        if " " in value:
-            raise ValueError("nickname_no_space")
-        
-        # 닉네임 10글자 이내
-        if len(value) > 10:
-            raise ValueError("nickname_max_length")
-        
-        return value
+    def nickname_check(cls, value):
+        return validate_nickname(value)
 
 
 """ ----------------------------- 비밀번호 수정 관련 ----------------------------- """
@@ -152,25 +99,11 @@ class UserPasswordEdit(BaseModel):
     # 비밀번호 유효성 검사
     @field_validator("password")
     @classmethod
-    def password_rule(cls, value):
-        if not value or value.strip() == "":
-            raise ValueError("password_required")
-
-        pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,20}$'
-        if not re.match(pattern, value):
-            raise ValueError("invalid_password_rule")
-        
-        return value
+    def password_check(cls, value):
+        return validate_password(value)
     
     # 비밀번호 확인 검사
     @field_validator("password_confirm")
     @classmethod
-    def confirm_password(cls, value, info) -> str:
-        # 비밀번호 확인 입력 안했을 시
-        if not value or value.strip() == "":
-            raise ValueError("password_confirm_required")
-
-        # 비밀번호가 확인과 다를 시
-        if "password" in info.data and value != info.data["password"]:
-            raise ValueError("password_not_match")
-        return value
+    def password_confirm_check(cls, value, info) -> str:
+        return validate_password_confirm(value, info.data.get("password"))

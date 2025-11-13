@@ -2,13 +2,12 @@
 from fastapi import APIRouter, Query, status
 from fastapi.responses import JSONResponse
 
-from models.post_model import PostCreate
-from controllers.post_controller import get_post_list_service, get_post_detail_service, delete_post_service, toogle_post_like_service, create_post_service
+from models.post_model import PostCreate, PostUpdate
+from controllers.post_controller import get_post_list_service, get_post_detail_service, delete_post_service, toogle_post_like_service, create_post_service, update_post_service
 from utils.formatter import create_json_response
 
 
 router = APIRouter(prefix="/posts")
-
 
 # 게시글 생성 API
 @router.post("")
@@ -43,3 +42,11 @@ async def delete_post(post_id: int) -> JSONResponse:
 async def toggle_post_like(post_id: int, user_id: int) -> JSONResponse:
     data = await toogle_post_like_service(post_id, user_id)
     return create_json_response(status_code=status.HTTP_200_OK, message="좋아요 토클 성공", data=data)
+
+
+# 게시글 수정 API
+@router.patch("/{post_id}")
+async def update_post(post_id: int, post_dto: PostUpdate) -> JSONResponse:
+    data = await update_post_service(post_id, post_dto)
+    return create_json_response(status_code=status.HTTP_200_OK, message="게시글 수정 성공", data=data)
+

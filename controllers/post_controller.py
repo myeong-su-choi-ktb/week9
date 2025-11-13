@@ -2,9 +2,9 @@
 from fastapi import status
 from fastapi.responses import JSONResponse
 
-from models.post_model import PostCreate
+from models.post_model import PostCreate, PostUpdate
 from models.post_model import posts, liked_posts # DB 대체
-from models.comment_model import comments # DB 대체
+from models.comment_model import comments        # DB 대체
 from utils.formatter import format_number
 
 from datetime import datetime
@@ -26,7 +26,7 @@ async def create_post_service(post_dto: PostCreate) -> dict:
         "like_count": 0,
         "view_count": 0,
         "comment_count": 0,
-        "create_at": datetime.now(),
+        "created_at": datetime.now(),
         "updated_at": datetime.now()
     }
 
@@ -34,7 +34,7 @@ async def create_post_service(post_dto: PostCreate) -> dict:
 
     return {
         **new_post,
-        "create_at": new_post["create_at"].strftime("%Y-%m-%d %H:%M:%S"),
+        "created_at": new_post["created_at"].strftime("%Y-%m-%d %H:%M:%S"),
         "updated_at": new_post["updated_at"].strftime("%Y-%m-%d %H:%M:%S"),
     }
 
@@ -144,3 +144,33 @@ async def toogle_post_like_service(post_id: int, user_id: int) -> dict:
             "action": "liked",
             "like_count": post["like_count"]
         }
+    
+
+# 게시글 수정 서비스
+async def update_post_service(post_id: int, post_dto: PostUpdate) -> dict:
+
+    # 수정 대상 게시글 조히
+    post = next((p for p in posts if p["id"] == post_id), None)
+    if not post:
+        raise ValueError("post_not_found")
+    
+    # 전달된 값을 게시글 데이터 업데이트
+    post["title"] = post_dto.title
+    post["content"] = post_dto.content
+    post["image_url"] = post_dto.image_url
+
+    # 수정일 갱신
+    post["updated_url"] = datetime.now()
+
+    # 수정된 데이터 반환
+    return {
+        "id": post["id"],
+        "author_id": post["author_id"],
+        "title": post["title"],
+        "content": post["content"],
+        "image_url": post.get("image_url"),
+        "like_count": post["like_count"],
+        "view_count": post["view_count"],
+        "comment_count": post["comment_count"],
+        "updated_at": post["updated_at"].strftime("%Y-%m-%d %H:%M:%S"),
+    }

@@ -1,6 +1,7 @@
 # models/comment_model.py
 from typing import List, Dict
 from datetime import datetime, timedelta
+from pydantic import BaseModel
 
 
 # 댓글 정보를 임시로 저장하는 in-memory 저장소
@@ -13,5 +14,10 @@ comments: List[Dict] = [
     {"id": 5, "post_id": 2, "author_id": 1, "content": "테스트5 댓글입니다.", "created_at": now - timedelta(minutes=20), "updated_at": now}
 ]
 
+# 댓글 생성 요청 DTO
+class CommentCreate(BaseModel):
+    content: str
 
-
+# 댓글 수정 요청 DTO
+class CommentUpdate(BaseModel):
+    content: str

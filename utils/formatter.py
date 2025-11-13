@@ -12,7 +12,6 @@ def format_number(value: int) -> str:
         return f"{value // 1000}k"
     return str(value)
 
-
 # JSON Response 포맷
 def create_json_response(status_code: int, message: str, data=None) -> JSONResponse:
     return JSONResponse(

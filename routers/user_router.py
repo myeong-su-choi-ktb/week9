@@ -18,7 +18,7 @@ async def login(login_dto: UserLogin) -> JSONResponse:
 
 # 사용자 회원가입 API
 @router.post("/signup")
-async def singup(signup_dto: UserSignup) -> JSONResponse:
+async def signup(signup_dto: UserSignup) -> JSONResponse:
     data = await signup_service(signup_dto)
     return create_json_response(status_code=status.HTTP_201_CREATED, message="회원가입 성공", data=data)
 

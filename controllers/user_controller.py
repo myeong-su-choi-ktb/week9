@@ -9,6 +9,7 @@ async def login_service(login_dto: UserLogin) -> dict:
     # 이메일과 비밀번호가 일치하는 사용자 찾기
     for user in users:
         if user["email"] == login_dto.email and user["password"] == login_dto.password:
+            
             return {
                 "email": user["email"],
                 "nickname": user["nickname"],
